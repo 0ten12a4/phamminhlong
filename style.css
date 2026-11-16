@@ -1,0 +1,201 @@
+/* Giao diện "bảng ghim giấy" (cork board): nền nút chai, đỏ gạch, kem, xanh rêu.
+   Bố cục lưới đều toàn màn hình: hàng 1 (ảnh | giới thiệu), hàng 2 (3 thẻ bằng nhau), hàng 3 (2 thẻ bằng nhau).
+   Mọi tờ giấy đặt thẳng hàng, không nghiêng, ảnh đại diện không bị gì đè lên. */
+:root {
+  /* Vị trí ảnh trong khung: 0% = thấy phần trên của ảnh, 100% = thấy phần dưới. Tăng số này để ĐẨY ẢNH LÊN, giảm để kéo xuống. */
+  --photo-y: 42%;
+  --cork: #c79a63;
+  --brick: #a8362b;
+  --brick-dark: #7e2219;
+  --cream: #fff8e8;
+  --yellow: #fff0b3;
+  --rose: #f7d6cd;
+  --moss: #dde8c8;
+  --moss-dark: #4f6b2f;
+  --ink: #2b2118;
+  --ink-soft: #6a5a48;
+  --line: rgba(43, 33, 24, .16);
+  --gap: clamp(18px, 1.8vw, 34px);
+  --radius: 10px;
+  --shadow: 0 10px 22px rgba(60, 35, 10, .28), 0 2px 4px rgba(60, 35, 10, .2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: clamp(16px, 0.5vw + 11px, 21px); }
+
+body {
+  font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.06rem; line-height: 1.6; color: var(--ink);
+  background-color: var(--cork);
+  background-image:
+    radial-gradient(rgba(90, 55, 20, .30) 1.2px, transparent 1.7px),
+    radial-gradient(rgba(255, 235, 200, .25) 1px, transparent 1.5px),
+    radial-gradient(rgba(70, 40, 12, .16) 2px, transparent 2.6px);
+  background-size: 14px 14px, 23px 23px, 37px 37px;
+  background-position: 0 0, 7px 9px, 15px 4px;
+  min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 3px solid var(--brick-dark); outline-offset: 3px; }
+
+/* ---------- Thanh tiêu đề đỏ gạch ---------- */
+.bar {
+  background: var(--brick); color: var(--cream); text-align: center;
+  padding: clamp(14px, 1.4vw, 26px) 16px; border-bottom: 5px dashed var(--cream);
+  box-shadow: 0 6px 16px rgba(60, 35, 10, .3);
+}
+.bar h1 {
+  font-family: "Patrick Hand", "Source Sans 3", sans-serif; font-weight: 400; letter-spacing: .14em;
+  text-transform: uppercase; font-size: clamp(1.3rem, 2.4vw, 2.4rem); line-height: 1.2;
+}
+
+/* ---------- Khung toàn màn hình ---------- */
+.wrap { width: 100%; max-width: 2200px; margin: 0 auto; padding: clamp(24px, 2.6vw, 48px) clamp(16px, 3vw, 64px) 56px; }
+.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; }
+
+/* Hàng 1: ảnh (1 cột) | giới thiệu (2 cột) | thông tin (1 cột)
+   Hàng 2: sở thích | đại học | video | kết nối (mỗi thẻ 1 cột) */
+.t-photo, .t-info, .t-hob, .t-uni, .t-video, .t-contact { grid-column: span 1; }
+.t-intro { grid-column: span 2; }
+
+/* ---------- Tờ giấy ghim ---------- */
+.note {
+  position: relative; background: var(--cream); border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: clamp(26px, 2.2vw, 40px) clamp(20px, 2vw, 38px) clamp(22px, 2vw, 36px);
+  display: flex; flex-direction: column; min-width: 0; scroll-margin-top: 20px;
+}
+.note::before {                               /* chiếc ghim */
+  content: ""; position: absolute; top: -10px; left: 50%; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff9b8a, var(--brick) 60%, var(--brick-dark));
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .35);
+}
+.t-info { background: var(--cream); }
+.t-hob { background: var(--yellow); }
+.t-uni { background: var(--rose); }
+.t-video { background: var(--moss); }
+.t-contact { background: var(--cream); }
+
+.note h2 {
+  font-family: "Patrick Hand", "Source Sans 3", sans-serif; font-weight: 400; font-size: clamp(1.5rem, 1.8vw, 2.2rem);
+  line-height: 1.15; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 3px dotted var(--line);
+  display: flex; align-items: center; gap: 12px;
+}
+.note h2 .no {
+  flex: none; min-width: 2.1rem; height: 2.1rem; padding: 0 8px; border-radius: 6px; display: grid; place-items: center;
+  font-family: "Source Sans 3", sans-serif; font-weight: 800; font-size: .9rem; background: var(--brick); color: var(--cream);
+}
+.t-uni h2 .no, .t-video h2 .no { background: var(--moss-dark); }
+
+/* ---------- Hàng 1: ảnh | giới thiệu ---------- */
+.t-photo { padding: clamp(14px, 1.2vw, 22px); background: #fff; }
+.photo-frame { position: relative; flex: 1; min-height: clamp(300px, 28vw, 620px); background: linear-gradient(150deg, var(--rose), var(--moss)); border-radius: 4px; overflow: hidden; }
+.photo-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% var(--photo-y); display: block; }
+
+/* Ô giới thiệu: trang vở kẻ ngang, căn giữa, ruy băng + con dấu tròn */
+.t-intro {
+  container-type: inline-size; justify-content: center; align-items: center; text-align: center;
+  background-color: var(--cream);
+  background-image:
+    linear-gradient(90deg, transparent 2.1rem, rgba(190, 60, 50, .5) 2.1rem, rgba(190, 60, 50, .5) calc(2.1rem + 2px), transparent calc(2.1rem + 2px)),
+    repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.9rem - 1px), rgba(70, 110, 170, .28) calc(1.9rem - 1px), rgba(70, 110, 170, .28) 1.9rem);
+  background-position: 0 0, 0 .6rem;
+}
+.ribbon {
+  background: var(--moss-dark); color: var(--cream); padding: 6px 2.8rem; margin-bottom: 14px;
+  font-family: "Patrick Hand", sans-serif; font-size: 1.25rem; letter-spacing: .1em; text-transform: uppercase; line-height: 1.3;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%, 14px 50%);
+}
+.name { max-width: 100%; font-family: "Patrick Hand", "Source Sans 3", sans-serif; font-weight: 400; line-height: 1.12; white-space: nowrap; font-size: clamp(1.9rem, 5vw, 4rem); color: var(--brick-dark); }
+.name span { text-decoration: underline wavy var(--brick); text-decoration-thickness: 3px; text-underline-offset: .14em; text-decoration-skip-ink: none; }
+@supports (width: 1cqi) { .name { font-size: clamp(1.9rem, 10cqi, 5.4rem); } }
+.sub { color: var(--ink-soft); font-weight: 600; font-size: 1.12rem; margin-top: 14px; text-wrap: balance; }
+
+.stamps { display: flex; justify-content: center; gap: clamp(10px, 1.4vw, 24px); margin: 22px 0 18px; }
+.stamp {
+  width: clamp(4.8rem, 7.2vw, 7.8rem); aspect-ratio: 1; border-radius: 50%; border: 4px double var(--brick); color: var(--brick-dark);
+  background: rgba(255, 255, 255, .7); display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.stamp:nth-child(2) { border-color: var(--moss-dark); color: var(--moss-dark); }
+.stamp b { font-family: "Patrick Hand", sans-serif; font-weight: 400; font-size: clamp(1.4rem, 2vw, 2.2rem); line-height: 1; }
+.stamp small { font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; margin-top: 4px; }
+
+.bio { color: var(--ink-soft); font-size: 1.1rem; text-wrap: balance; background: rgba(255, 248, 232, .85); padding: 2px 10px; border-radius: 4px; }
+.bio span { display: block; text-wrap: balance; }
+
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+.chips a { font-weight: 700; font-size: .9rem; padding: 7px 18px; border-radius: 4px 4px 14px 14px; background: var(--brick); color: var(--cream); transition: .2s; }
+.chips a:nth-child(even) { background: var(--moss-dark); }
+.chips a:hover { transform: translateY(-2px); }
+
+/* ---------- Nội dung các thẻ: giãn đều để cao bằng nhau ---------- */
+.rows { list-style: none; flex: 1; display: grid; grid-auto-rows: 1fr; }
+.rows li { display: flex; flex-direction: column; justify-content: center; gap: 1px; padding: 6px 0; border-bottom: 2px dotted var(--line); }
+.rows li:last-child { border-bottom: 0; }
+.rows small { font-weight: 800; letter-spacing: .08em; text-transform: uppercase; font-size: .72rem; color: var(--brick); flex: none; }
+.rows strong { text-align: left; font-weight: 700; line-height: 1.3; }
+
+.hobbies { flex: 1; display: grid; grid-template-columns: 1fr; grid-auto-rows: 1fr; gap: 14px; }
+.hobby {
+  display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 16px; text-align: left;
+  background: var(--cream); border: 2px dashed var(--ink); border-radius: 8px; padding: 14px 18px;
+  font-family: "Patrick Hand", sans-serif; font-size: 1.3rem; line-height: 1.15; transition: transform .25s; overflow-wrap: anywhere;
+}
+.hobby:hover { transform: translateY(-4px); }
+.hobby span { font-size: 2.6rem; line-height: 1; flex: none; }
+
+.unis { list-style: none; flex: 1; display: grid; grid-auto-rows: 1fr; gap: 10px; }
+.unis li { display: flex; align-items: center; gap: 14px; padding: 8px 14px; border-radius: 8px; background: var(--cream); font-weight: 700; border: 2px solid var(--line); transition: transform .25s; }
+.unis li:hover { transform: translateX(6px); }
+.unis li:first-child { background: var(--brick); color: var(--cream); border-color: var(--brick-dark); }
+.unis .code { flex: none; min-width: 4.2rem; text-align: center; font-weight: 800; font-size: .84rem; letter-spacing: .06em; padding: 5px 10px; border-radius: 4px; background: var(--ink); color: var(--cream); }
+.unis li:first-child .code { background: var(--cream); color: var(--brick-dark); }
+
+.t-video figure { margin: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.t-video video { width: 100%; height: clamp(220px, 15vw, 330px); display: block; border: 4px solid #fff; border-radius: 4px; background: #000; object-fit: contain; flex: none; box-shadow: 0 4px 10px rgba(0, 0, 0, .25); }
+.t-video figcaption { margin-top: 10px; color: var(--ink-soft); font-size: .94rem; }
+
+.links { flex: 1; display: grid; grid-auto-rows: 1fr; gap: 14px; }
+.link { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-radius: 8px; background: var(--yellow); border: 2px dashed var(--ink); transition: .25s; min-width: 0; }
+.link:nth-child(2) { background: var(--rose); }
+.link:hover { background: var(--moss); transform: translateY(-3px); }
+.link img { width: 4rem; height: 4rem; border-radius: 12px; object-fit: cover; background: #fff; flex: none; }
+.link span { min-width: 0; overflow-wrap: break-word; }
+.link small { overflow-wrap: anywhere; }
+.link b { display: block; font-family: "Patrick Hand", sans-serif; font-weight: 400; font-size: 1.5rem; line-height: 1.1; }
+.link small { color: var(--ink-soft); font-weight: 700; font-size: 1rem; }
+
+/* Thẻ hẹp (cột 1/4): nội dung xếp dọc để chữ không bị bẻ giữa từ */
+.t-uni, .t-contact { container-type: inline-size; }
+@container (max-width: 400px) {
+  .link { flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; }
+  .unis li { flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; }
+}
+
+footer { text-align: center; margin-top: 38px; color: var(--cream); font-family: "Patrick Hand", sans-serif; font-size: 1.3rem; text-shadow: 0 1px 3px rgba(60, 35, 10, .6); }
+
+/* ---------- Hiệu ứng xuất hiện (không áp lên ảnh) ---------- */
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .chips a, .hobby, .unis li, .link { transition: none; }
+}
+
+/* ---------- Máy tính bảng: 2 cột, các cặp thẻ bằng nhau ---------- */
+@media (max-width: 1199px) {
+  .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .t-intro { grid-column: span 1; }
+  .t-uni { order: 5; } .t-contact { order: 6; }
+  .t-video { order: 7; grid-column: 1 / -1; }
+  .t-video video { height: clamp(240px, 36vw, 380px); }
+}
+/* ---------- Điện thoại: một cột ---------- */
+@media (max-width: 700px) {
+  .board { grid-template-columns: minmax(0, 1fr); }
+  .t-photo, .t-intro, .t-info, .t-hob, .t-uni, .t-video, .t-contact { grid-column: 1 / -1; }
+  .photo-frame { min-height: 0; aspect-ratio: 4 / 4.2; flex: none; }
+  .rows li { padding: 12px 0; }
+  .unis li { min-height: 3.4rem; }
+  .t-video video { height: auto; aspect-ratio: 16 / 9; }
+}
